@@ -1,41 +1,52 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import getNotionAssetUrls from '../../lib/notion/getNotionAssetUrls'
-import { setHeaders, handleData, handleError } from '../../lib/notion/utils'
+import {NextApiRequest, NextApiResponse} from 'next';
+import getNotionAssetUrls from '../../lib/notion/getNotionAssetUrls';
+import {handleData, handleError, setHeaders} from '@lib/notion/utils';
+
+interface QueryParams {
+  assetUrl?: string;
+  blockId?: string;
+}
 
 export default async function notionApi(
-  req: NextApiRequest,
-  res: NextApiResponse
+    req: NextApiRequest,
+    res: NextApiResponse
 ) {
-  if (setHeaders(req, res)) return
-  try {
-    const { assetUrl, blockId } = req.query as { [k: string]: string }
+  // Set CORS or other headers and return early if setHeaders indicates no further action
+  if (setHeaders(req, res)) return;
 
+  try {
+    const {assetUrl, blockId} = req.query as QueryParams;
+
+    // Validate required parameters
     if (!assetUrl || !blockId) {
-      handleData(res, {
+      return handleData(res, {
         status: 'error',
-        message: 'asset url or blockId missing',
-      })
-    } else {
-      // we need to re-encode it since it's decoded when added to req.query
-      const { signedUrls = [], ...urlsResponse } = await getNotionAssetUrls(
+        message: 'Missing required parameters: assetUrl or blockId',
+      });
+    }
+
+    // Retrieve signed URLs for the Notion asset
+    const {signedUrls = [], ...urlsResponse} = await getNotionAssetUrls(
         res,
         assetUrl,
         blockId
-      )
+    );
 
-      if (signedUrls.length === 0) {
-        console.error('Failed to get signedUrls', urlsResponse)
-        return handleData(res, {
-          status: 'error',
-          message: 'Failed to get asset URL',
-        })
-      }
-
-      res.status(307)
-      res.setHeader('Location', signedUrls.pop())
-      res.end()
+    if (signedUrls.length === 0) {
+      console.error('Failed to retrieve signed URLs:', urlsResponse);
+      return handleData(res, {
+        status: 'error',
+        message: 'Failed to retrieve asset URL',
+      });
     }
+
+    // Redirect to the last signed URL in the array
+    // @ts-ignore
+    res.status(307).setHeader('Location', signedUrls.pop());
+    res.end();
   } catch (error) {
-    handleError(res, error)
+    // Handle any unexpected errors
+    // @ts-ignore
+    handleError(res, error);
   }
 }

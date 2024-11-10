@@ -1,28 +1,35 @@
-import {ParseError, renderToString} from 'katex'
+import { ParseError, renderToString } from 'katex';
+import React from 'react';
 
-function render(expression: string, displayMode: boolean): string {
-  let result: string
-  try {
-    result = renderToString(expression, {displayMode: displayMode})
-  } catch (e) {
-    if (e instanceof ParseError) {
-      result = e.message
-    }
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(e)
-    }
-  }
-  return result
+interface EquationProps {
+  children: string;
+  displayMode?: boolean;
 }
 
-const Equation = ({children, displayMode = true}) => {
+function renderExpression(expression: string, displayMode: boolean): string {
+  try {
+    return renderToString(expression, { displayMode });
+  } catch (e) {
+    if (e instanceof ParseError) {
+      // Return the error message as a fallback result
+      return e.message;
+    }
+    // Log unexpected errors in development mode
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(e);
+    }
+    return ''; // Return an empty string if an unexpected error occurs
+  }
+}
+
+const Equation: React.FC<EquationProps> = ({ children, displayMode = true }) => {
   return (
       <span
           dangerouslySetInnerHTML={{
-            __html: render(children, displayMode),
+            __html: renderExpression(children, displayMode),
           }}
       />
-  )
-}
+  );
+};
 
-export default Equation
+export default Equation;

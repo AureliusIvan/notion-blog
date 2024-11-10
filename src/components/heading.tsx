@@ -1,28 +1,37 @@
-const collectText = (el, acc = []) => {
-  if (el) {
-    if (typeof el === 'string') acc.push(el)
-    if (Array.isArray(el)) el.map((item) => collectText(item, acc))
-    if (typeof el === 'object') collectText(el.props && el.props.children, acc)
+import React, { ReactNode, ReactElement } from 'react';
+
+function collectText(el: ReactNode, acc: string[] = []): string {
+  if (typeof el === 'string') {
+    acc.push(el);
+  } else if (Array.isArray(el)) {
+    el.forEach((item) => collectText(item, acc));
+  } else if (React.isValidElement(el)) {
+    collectText(el.props.children, acc);
   }
-  return acc.join('').trim()
+  return acc.join('').trim();
 }
 
-const Heading = ({ children: component, id }: { children: any; id?: any }) => {
-  const children = component.props.children || ''
-  let text = children
+interface HeadingProps {
+  children: ReactElement;
+  id?: string;
+}
 
-  if (null == id) {
+const Heading: React.FC<HeadingProps> = ({ children: component, id }) => {
+  const text = component.props.children || '';
+
+  // Generate ID if not provided
+  if (!id) {
     id = collectText(text)
-      .toLowerCase()
-      .replace(/\s/g, '-')
-      .replace(/[?!:]/g, '')
+        .toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with dashes
+        .replace(/[?!:]/g, ''); // Remove unwanted punctuation
   }
 
   return (
-    <a href={`#${id}`} id={id} style={{ color: 'inherit' }}>
-      {component}
-    </a>
-  )
-}
+      <a href={`#${id}`} id={id} style={{ color: 'inherit' }}>
+        {component}
+      </a>
+  );
+};
 
-export default Heading
+export default Heading;

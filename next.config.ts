@@ -7,17 +7,19 @@ const nextConfig: NextConfig = {
     NOTION_TOKEN: process.env.NOTION_TOKEN,
     BLOG_INDEX_ID: process.env.BLOG_INDEX_ID,
   },
-  webpack: (config, {isServer, dev}) => {
-    // Example: Conditionally add entries or plugins only in production server builds
-    if (!dev && isServer) {
-      config.entry = async () => {
-        const originalEntry = await config.entry();
-        return {
-          ...originalEntry,
-          'build-rss.js': './src/lib/build-rss.ts', // Server-only build entry
-        };
-      };
-    }
+  webpack: (config, {isServer}) => {
+    if (!isServer) return config;
+
+    // Remove or comment out any code that references build-rss
+    // const originalEntry = config.entry;
+    // config.entry = async () => {
+    //   const entries = await originalEntry();
+    //   if (!entries['build-rss']) {
+    //     entries['build-rss'] = './src/lib/build-rss.ts';
+    //   }
+    //   return entries;
+    // };
+
     return config;
   },
 };

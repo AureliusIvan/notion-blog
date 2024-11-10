@@ -5,10 +5,9 @@
   "scripts": {
     "dev": "NODE_OPTIONS=--openssl-legacy-provider next dev",
     "start": "next start",
-    "build": "next build && node .next/server/build-rss.js",
+    "build": "next build",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss,sass}\" --ignore-path .gitignore",
-    "lint-staged": "lint-staged",
-    "prebuild": "node scripts/prebuild.js"
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@zeit/react-jsx-parser": "^2.0.0",
