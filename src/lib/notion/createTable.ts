@@ -1,11 +1,6 @@
-// commonjs so it can be run without transpiling
-const { v4: uuid } = require('uuid')
-const fetch = require('node-fetch')
-const {
-  BLOG_INDEX_ID: pageId,
-  NOTION_TOKEN,
-  API_ENDPOINT,
-} = require('./server-constants')
+import {API_ENDPOINT, BLOG_INDEX_ID as pageId, NOTION_TOKEN} from "./server-constants";
+import {v4 as uuid} from "uuid";
+
 
 async function main() {
   const userId = await getUserId()
@@ -100,16 +95,16 @@ async function main() {
               name: 'Default View',
               format: {
                 table_properties: [
-                  { property: 'title', visible: true, width: 276 },
-                  { property: 'S6_"', visible: true },
-                  { property: 'la`A', visible: true },
-                  { property: 'a`af', visible: true },
-                  { property: 'ijjk', visible: true },
+                  {property: 'title', visible: true, width: 276},
+                  {property: 'S6_"', visible: true},
+                  {property: 'la`A', visible: true},
+                  {property: 'a`af', visible: true},
+                  {property: 'ijjk', visible: true},
                 ],
                 table_wrap: true,
               },
               query2: {
-                aggregations: [{ property: 'title', aggregator: 'count' }],
+                aggregations: [{property: 'title', aggregator: 'count'}],
               },
               page_sort: [pageId1, pageId2, pageId3],
               parent_id: collectionId,
@@ -125,18 +120,18 @@ async function main() {
             args: {
               id: collectionViewId,
               schema: {
-                title: { name: 'Page', type: 'title' },
-                'S6_"': { name: 'Slug', type: 'text' },
-                'la`A': { name: 'Published', type: 'checkbox' },
-                'a`af': { name: 'Date', type: 'date' },
-                ijjk: { name: 'Authors', type: 'person' },
+                title: {name: 'Page', type: 'title'},
+                'S6_"': {name: 'Slug', type: 'text'},
+                'la`A': {name: 'Published', type: 'checkbox'},
+                'a`af': {name: 'Date', type: 'date'},
+                ijjk: {name: 'Authors', type: 'person'},
               },
               format: {
                 collection_page_properties: [
-                  { property: 'S6_"', visible: true },
-                  { property: 'la`A', visible: true },
-                  { property: 'a`af', visible: true },
-                  { property: 'ijjk', visible: true },
+                  {property: 'S6_"', visible: true},
+                  {property: 'la`A', visible: true},
+                  {property: 'a`af', visible: true},
+                  {property: 'ijjk', visible: true},
                 ],
               },
               parent_id: collectionId,
@@ -149,7 +144,7 @@ async function main() {
             table: 'block',
             path: [],
             command: 'update',
-            args: { parent_id: pageId, parent_table: 'block', alive: true },
+            args: {parent_id: pageId, parent_table: 'block', alive: true},
           },
           {
             table: 'block',
@@ -158,10 +153,10 @@ async function main() {
             command: 'listAfter',
             args: {
               ...(existingBlockId
-                ? {
+                  ? {
                     after: existingBlockId,
                   }
-                : {}),
+                  : {}),
               id: collectionId,
             },
           },
@@ -334,7 +329,7 @@ async function getExistingexistingBlockId() {
     body: JSON.stringify({
       pageId,
       limit: 25,
-      cursor: { stack: [] },
+      cursor: {stack: []},
       chunkNumber: 0,
       verticalColumns: false,
     }),
@@ -342,12 +337,12 @@ async function getExistingexistingBlockId() {
 
   if (!res.ok) {
     throw new Error(
-      `failed to get existing block id, request status: ${res.status}`
+        `failed to get existing block id, request status: ${res.status}`
     )
   }
   const data = await res.json()
   const id = Object.keys(data ? data.recordMap.block : {}).find(
-    id => id !== pageId
+      id => id !== pageId
   )
   return id || uuid()
 }
@@ -364,11 +359,11 @@ async function getUserId() {
 
   if (!res.ok) {
     throw new Error(
-      `failed to get Notion user id, request status: ${res.status}`
+        `failed to get Notion user id, request status: ${res.status}`
     )
   }
   const data = await res.json()
   return Object.keys(data.recordMap.notion_user)[0]
 }
 
-module.exports = main
+export default main;

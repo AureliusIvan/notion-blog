@@ -1,32 +1,34 @@
 {
   "name": "notion-blog",
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next dev",
     "start": "next start",
     "build": "next build && node .next/server/build-rss.js",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss,sass}\" --ignore-path .gitignore",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "prebuild": "node scripts/prebuild.js"
   },
-  "pre-commit": "lint-staged",
   "dependencies": {
-    "@zeit/react-jsx-parser": "2.0.0",
-    "async-sema": "3.1.0",
-    "github-slugger": "1.2.1",
-    "katex": "0.12.0",
-    "next": "^11.1.2",
-    "prismjs": "1.17.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "uuid": "8.1.0"
+    "@zeit/react-jsx-parser": "^2.0.0",
+    "async-sema": "^3.1.1",
+    "github-slugger": "^2.0.0",
+    "katex": "^0.16.11",
+    "next": "^15.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
-    "@types/katex": "0.11.0",
-    "@types/node": "14.14.31",
-    "@types/react": "17.0.2",
-    "lint-staged": "10.5.4",
+    "@types/katex": "^0.16.7",
+    "@types/node": "^22.9.0",
+    "@types/prismjs": "^1.26.5",
+    "@types/react": "^18.3.12",
+    "lint-staged": "^15.2.10",
     "pre-commit": "1.2.2",
-    "prettier": "2.2.1",
-    "typescript": "^4.4.4"
+    "prettier": "^3.3.3",
+    "prismjs": "^1.29.0",
+    "typescript": "^5.6.3"
   }
 }

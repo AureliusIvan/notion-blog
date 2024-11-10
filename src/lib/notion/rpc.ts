@@ -1,4 +1,3 @@
-import fetch, { Response } from 'node-fetch'
 import { API_ENDPOINT, NOTION_TOKEN } from './server-constants'
 
 export default async function rpc(fnName: string, body: any) {
@@ -27,9 +26,30 @@ export async function getError(res: Response) {
   )}\n ${await getBodyOrNull(res)}`
 }
 
-export function getJSONHeaders(res: Response) {
-  return JSON.stringify(res.headers.raw())
+// export function getJSONHeaders(res: Response) {
+//   if (typeof res.headers.raw === 'function') {
+//     // Use raw() if available
+//     return JSON.stringify(res.headers.raw());
+//   } else {
+//     // Fallback: Manually construct headers as an object
+//     const headersObj: Record<string, string[]> = {};
+//     res.headers.forEach((value, key) => {
+//       headersObj[key] = headersObj[key] ? [...headersObj[key], value] : [value];
+//     });
+//     return JSON.stringify(headersObj);
+//   }
+// }
+
+export function getJSONHeaders(res: Response): string {
+  // Convert headers to a plain object
+  const headersObj: Record<string, string[]> = {};
+  res.headers.forEach((value, key) => {
+    headersObj[key] = headersObj[key] ? [...headersObj[key], value] : [value];
+  });
+  return JSON.stringify(headersObj);
 }
+
+
 
 export function getBodyOrNull(res: Response) {
   try {

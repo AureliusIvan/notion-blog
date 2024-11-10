@@ -1,12 +1,12 @@
-import { values } from './rpc'
+import {values} from './rpc'
 import Slugger from 'github-slugger'
 import queryCollection from './queryCollection'
-import { normalizeSlug } from '../blog-helpers'
+import {normalizeSlug} from '../blog-helpers'
 
 export default async function loadTable(collectionBlock: any, isPosts = false) {
   const slugger = new Slugger()
 
-  const { value } = collectionBlock
+  const {value} = collectionBlock
   let table: any = {}
   const col = await queryCollection({
     collectionId: value.collection_id,
@@ -43,8 +43,8 @@ export default async function loadTable(collectionBlock: any, isPosts = false) {
             break
           case 'u': // user
             val = props[key]
-              .filter((arr: any[]) => arr.length > 1)
-              .map((arr: any[]) => arr[1][0][1])
+                .filter((arr: any[]) => arr.length > 1)
+                .map((arr: any[]) => arr[1][0][1])
             break
           case 'p': // page (block)
             const page = col.recordMap.block[type[1]]
@@ -61,16 +61,16 @@ export default async function loadTable(collectionBlock: any, isPosts = false) {
             }
             // initial with provided date
             const providedDate = new Date(
-              type[1].start_date + ' ' + (type[1].start_time || '')
+                type[1].start_date + ' ' + (type[1].start_time || '')
             ).getTime()
 
             // calculate offset from provided time zone
             const timezoneOffset =
-              new Date(
-                new Date().toLocaleString('en-US', {
-                  timeZone: type[1].time_zone,
-                })
-              ).getTime() - new Date().getTime()
+                new Date(
+                    new Date().toLocaleString('en-US', {
+                      timeZone: type[1].time_zone,
+                    })
+                ).getTime() - new Date().getTime()
 
             // initialize subtracting time zone offset
             val = new Date(providedDate - timezoneOffset).getTime()
